@@ -1,0 +1,26 @@
+DAOLayer/DBDaoImpl.java
+ DAOLayer.DBDaoImpl
+ChatMatesRecommendation/Recommendation.java
+ ChatMatesRecommendation.Recommendation
+ChatMatesRecommendation/RecommendationEngine.java
+ ChatMatesRecommendation.RecommendationEngine
+IceBreakerStartChatActivity.java
+ IceBreakerStartChatActivity
+StandardResponse.java
+ StandardResponse
+DAOLayer/DBDao.java
+ DAOLayer.DBDao
+ChatMatesRecommendation/ChatMatesRecommendationService.java
+ ChatMatesRecommendation.ChatMatesRecommendationService
+Database/UserProfileDb.java
+ Database.UserProfileDb
+Database/ProfileData.java
+ Database.ProfileData
+Database/InterestData.java
+ Database.InterestData
+ChatMatesRecommendation/RecommendedChatMateInterestData.java
+ ChatMatesRecommendation.RecommendedChatMateInterestData
+Database/ConnectionData.java
+ Database.ConnectionData
+ChatMatesRecommendation/RecommendationEngineImpl.java
+ ChatMatesRecommendation.RecommendationEngineImpl

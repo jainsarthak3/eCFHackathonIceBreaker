@@ -1,4 +1,6 @@
 import ChatMatesRecommendation.RecommendedChatMateInterestData;
+import DAOLayer.DBDao;
+import DAOLayer.DBDaoImpl;
 import Database.InterestData;
 import Database.ProfileData;
 
@@ -6,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 public final class UILayer {
+    private static DBDao dbDao = new DBDaoImpl();
     private UILayer(List<RecommendedChatMateInterestData> recommendedChatMateInterestDataList) {}
 
     public static final String getHtmlPage(List<RecommendedChatMateInterestData> recommendedChatMateInterestDataList, String userProfileId) {
@@ -84,7 +87,8 @@ public final class UILayer {
                 "</head>\n" +
                 "<body>\n" +
                 "<script src=\"startChatJS.js\"></script>\n" +
-                "<h1>Let's do some Ice-Breakin' shall we?</h1>\n" +
+                "<h1> Hello " + dbDao.getUserData(userProfileId).getProfileUsername() + "! " +
+                "Let's do some Ice-Breakin' shall we?</h1>\n" +
                 "<h2> Connect with chat-mates having your matching interests </h2>\n" +
                 "<br>";
         int count = 0;

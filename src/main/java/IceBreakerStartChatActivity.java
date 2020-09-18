@@ -7,18 +7,21 @@ import Database.InterestData;
 import Database.ProfileData;
 import Database.UserProfileDb;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import static j2html.TagCreator.*;
+
+import com.google.gson.Gson;
+import inMemoryMaps.InterestToPosts;
+import inMemoryMaps.UserToInterests;
 import io.javalin.Javalin;
 import io.javalin.websocket.WsContext;
+import model.*;
 import org.json.JSONObject;
+import spark.Spark;
+
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static spark.Spark.*;
 
@@ -31,7 +34,7 @@ public class IceBreakerStartChatActivity {
     private static Map<String, WsContext> userToSession = new ConcurrentHashMap<>();
     private static Map<String, String> matchMap = new HashMap<>();
     public static void main(String[] args) {
-        //staticFileLocation("/public");
+        Spark.staticFiles.location("/public");
         dbDao.populateUserPoolData(populateUserPoolData());
         final List<RecommendedChatMateInterestData>[] recommendedChatMateInterestDataList = new List[]{new ArrayList<>()};
         AtomicReference<String> userProfileId = new AtomicReference<>("");
@@ -84,6 +87,71 @@ public class IceBreakerStartChatActivity {
                 sendMessageTo(userUsernameMap.get(context), context.message(), userToSession.get(matchMap.get(userUsernameMap.get(context))));
             });
         });
+
+        UserToInterests userToInterests = new UserToInterests();
+        InterestToPosts interestToPosts = new InterestToPosts();
+
+        get("/hello", (req, res) -> "hi");
+
+        get("/test/:input", ((request, response) ->
+                "Hey " + request.params("input")
+        ));
+
+        get("/home", ((request, response) ->
+                "<meta http-equiv = \"refresh\" content = \"2; url = http://localhost:4567/feed.html\" />\n"
+        ));
+
+        //addInterest
+//        get("/interest/add", (req, res) -> {
+
+//        });
+
+//        fetchPostsForInterests
+        get("/feed/:interests", (req, res) -> {
+            FetchPostsForInterestsRequest request = new FetchPostsForInterestsRequest();
+//            return Arrays.asList(req.params("interests").split("_"));
+            request.setInterests(Arrays.asList(req.params("interests").split(",")));
+            return new Gson().toJson(interestToPosts.fetchPostsForInterests(request));
+        });
+
+//        fetchInterestsForUser
+        get("/interest/fetch/:user", ((req, res) -> {
+            FetchInterestsRequest request = new FetchInterestsRequest();
+            request.setUserName(req.params("user"));
+            FetchInterestsResponse response = userToInterests.returnInterests(request);
+            return new Gson().toJson(response);
+        }));
+
+        get("/add/post/:input", (req, res) -> {
+            AddPostToInterestsRequest request = new AddPostToInterestsRequest();
+            List<String> input = Arrays.asList(req.params("input").split("_"));
+            request.setUser(input.get(0));
+            request.setInterests(Collections.singletonList(input.get(1)));
+            request.setPost(input.get(2));
+            interestToPosts.addPostToInterest(request);
+//            return new Gson().toJson(interestToPosts.interestToPosts);
+            return  "<meta http-equiv = \"refresh\" content = \"2; url = http://localhost:4567/home\" />\n";
+        });
+
+        get("/add/interest", ((req, res) ->
+                "<meta http-equiv = \"refresh\" content = \"2; url = http://localhost:4567/addUserInterest.html\" />\n"
+        ));
+
+//        });
+        get("/add/post", ((req, res) ->
+                "<meta http-equiv = \"refresh\" content = \"2; url = http://localhost:4567/addPost.html\" />\n"
+        ));
+
+//        addInterest
+        get("/interest/add/:input", (req, res) -> {
+            AddInterestRequest request = new AddInterestRequest();
+            List<String> input = Arrays.asList(req.params("input").split(","));
+            request.setUserName(input.get(0));
+            request.setInterest(input.get(1));
+            userToInterests.addInterest(request);
+            res.redirect("/home");
+            return new Gson().toJson(userToInterests);
+        });
     }
 
     //TODO: replace here with generic dao
@@ -119,9 +187,43 @@ public class IceBreakerStartChatActivity {
         dmgInterestDataList.add(dmgInt3);
         ProfileData deepakProfileData = new ProfileData("deepak", "dmg123", dmgConnectionList, dmgInterestDataList);
 
+        List<ConnectionData> swConnectionList = new ArrayList<>();
+        InterestData swInt1 = new InterestData("Matrimonial", "");
+        InterestData swInt2 = new InterestData("Design", "");
+        InterestData swInt3 = new InterestData("God", "");
+        List<InterestData> swInterestDataList = new ArrayList<>();
+        swInterestDataList.add(swInt1);
+        swInterestDataList.add(swInt2);
+        swInterestDataList.add(swInt3);
+        ProfileData saryuwProfileData = new ProfileData("saryuw", "sw123", swConnectionList, swInterestDataList);
+
+        List<ConnectionData> shwetankConnectionList = new ArrayList<>();
+        InterestData shwetankInt1 = new InterestData("Cricket", "");
+        InterestData shwetankInt2 = new InterestData("Coding", "");
+        InterestData shwetankInt3 = new InterestData("Design", "");
+        List<InterestData> shwetankInterestDataList = new ArrayList<>();
+        shwetankInterestDataList.add(shwetankInt1);
+        shwetankInterestDataList.add(shwetankInt2);
+        shwetankInterestDataList.add(shwetankInt3);
+        ProfileData shwetankProfileData = new ProfileData("shwetank", "shwetank123", shwetankConnectionList, shwetankInterestDataList);
+
+        List<ConnectionData> abhishekConnectionList = new ArrayList<>();
+        InterestData abhishekInt1 = new InterestData("Mathematics", "");
+        InterestData abhishekInt2 = new InterestData("Design", "");
+        InterestData abhishekInt3 = new InterestData("Cricket", "");
+        List<InterestData> abhishekInterestDataList = new ArrayList<>();
+        abhishekInterestDataList.add(abhishekInt1);
+        abhishekInterestDataList.add(abhishekInt2);
+        abhishekInterestDataList.add(abhishekInt3);
+        ProfileData abhishekProfileData = new ProfileData("abhishek", "abhishek123", abhishekConnectionList, abhishekInterestDataList);
+
         userProfileMap.put("dmg123", deepakProfileData);
         userProfileMap.put("ab123", abhayProfileData);
         userProfileMap.put("riz123", rizulgProfileData);
+        userProfileMap.put("sw123", saryuwProfileData);
+        userProfileMap.put("shwetank123", shwetankProfileData);
+        userProfileMap.put("abhishek123", abhishekProfileData);
+
         return userProfileMap;
     }
 

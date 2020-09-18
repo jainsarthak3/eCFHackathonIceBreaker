@@ -95,12 +95,13 @@ public final class UILayer {
         for(int i=0; i<recommendedChatMateInterestDataList.size(); i++){
             RecommendedChatMateInterestData recommendedChatMateInterestData = recommendedChatMateInterestDataList.get(i);
             Set<String> interestsSet = recommendedChatMateInterestData.getInterestsSet();
+            String chatMateProfileId = recommendedChatMateInterestData.getProfileData().getProfileId();
             if(interestsSet.size()==0 || recommendedChatMateInterestData.getProfileData().getProfileId()==userProfileId){
                 continue;
             }
             String profileUsername = recommendedChatMateInterestData.getProfileData().getProfileUsername();
             count++;
-            header = header + "<a href=\"#\" class=\"btn\" onclick=\"window.location.href = 'https://ide.geeksforgeeks.org';\">" + "Start chat with " + profileUsername + "</a> <h3> Common Interests </h3> <h4>"+ interestsSet + "</h4>" + "<br>";
+            header = header + "<a href=\"#\" class=\"btn\" onclick=\"window.location.href = 'http://localhost:7070/match/" + userProfileId + "," + chatMateProfileId +  "';\">" + "Start chat with " + profileUsername + "</a> <h3> Common Interests </h3> <h4>"+ interestsSet + "</h4>" + "<br>";
         }
         if(count==0){
             header = header + "<h4> Sorry, no available users are matching with your profile. Would you like to tune into more interests? :D </h4>";
